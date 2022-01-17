@@ -128,6 +128,7 @@ function actionHero(){
         hero.x += hero.speed;
         hero.frameY = 11;
         hero.moving = true;
+        
     }
     // if (keys[32]){  // SPACEBAR(32)
     //     //Add new shot to array
