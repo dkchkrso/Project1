@@ -1,0 +1,23 @@
+// -- Alternative for keyCode - start --
+// window.addEventListener('keydown', (e) => {
+//     switch (e.keyCode) { //e.key is replacing
+//       case 38: // up arrow
+//         player.speedY -= 1;
+//         break;
+//       case 40: // down arrow
+//         player.speedY += 1;
+//         break;
+//       case 37: // left arrow
+//         player.speedX -= 1;
+//         break;
+//       case 39: // right arrow
+//         player.speedX += 1;
+//         break;
+//     }
+//   });
+// window.addEventListener('keyup', (e) => {
+//     player.speedX = 0;
+//     player.speedY = 0;
+//   });
+// -- Alternative for keyCode - stop --
+
