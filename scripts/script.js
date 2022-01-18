@@ -11,6 +11,15 @@ background.src = "img/backgrounds/test2.png";
 const keys = [];
 const shots = [];
 const enemies = [];
+// const gameLevels = {
+//     gameLevel: 1,
+
+
+// }
+
+// let allowedEnemiesOnScreen = 2;
+// let enemyCount = 0;
+// let levelEnemiesTotal = 3;
 
 const hero = new Character(200, 0, 5);
 
@@ -48,6 +57,7 @@ class Enemy {
     this.enemyTimer = 0;
     this.enemySelect = 0; //default enemy selection
     this.radius = 20;
+    this.health = 10;
     //this.direction = Math.random - 0,5 // between 0,5 and -0,5
     }
     move() {
@@ -211,21 +221,24 @@ function animate(timeStamp){
             break;
         }
         //Check collision
-         //if (enemies.length !== 0){
-                 for (let j = 0; j < enemies.length; j++){
-                 let distance = Math.sqrt(Math.pow((shots[i].x - enemies[j].x),2) + Math.pow((shots[i].y - enemies[j].y),2));
-                 if (distance <= (shots[i].radius + enemies[j].radius))
-                 
-                    //Run Collision function
-                    shots.splice(i, 1);
-                    break;
-                 //enemies[j]);
-             } 
-         //}
+        if (enemies.length !== 0){
+        for (let j = 0; j < enemies.length; j++){
+            let distance = Math.sqrt(Math.pow((shots[i].x - enemies[j].x),2) + Math.pow((shots[i].y - enemies[j].y),2));
+            if (distance <= (shots[i].radius + enemies[j].radius)){
+                //ENEMY HIT
+                shots.splice(i, 1);
+                enemies[j].health--
+                    if(enemies[j].health <= 0){
+                        enemies.splice(j, 1);
+                    }
+                break;
+            }
+        }
+        } 
     }
 
     //Enemies
-    if (!enemies.length && enemyCount <= levelEnemiesTotal){
+    if (!enemies.length && enemyCount < levelEnemiesTotal){
         const enemy = new Enemy (200, 100, 50, 50, Math.floor((Math.random() * (characterSprites.length))))
         enemies.push(enemy);
         enemyCount++  
@@ -253,11 +266,9 @@ function animate(timeStamp){
 
     //Check Win/Lose
     if (enemyCount >= levelEnemiesTotal && enemies.length === 0){
-        
         const youLose = new Image();
         youLose.src = "img/Utility/youLose.png";
         ctx.drawImage(youLose, 0, 100, canvas.width , 400)
-
     }
 
     // console.log("allowedEnemiesOnScreen " + allowedEnemiesOnScreen);
