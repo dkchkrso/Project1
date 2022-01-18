@@ -7,10 +7,8 @@ canvas.height = 700;
 
 const bgCity = new Image();  // width, height
 bgCity.src = "img/backgrounds/city.png";
-const bgHighway = new Image();  // width, height
-bgHighway.src = "img/backgrounds/highway.png";
-const bgForest = new Image();  // width, height
-bgForest.src = "img/backgrounds/forest.jpg";
+const cityStreet = new Image();  // width, height
+cityStreet.src = "img/Utility/cityStreet.jpg";
 
 const keys = [];
 const shots = [];
@@ -22,6 +20,10 @@ const imgs = [];
 let audio = new Audio();
 audio.src = 'audio/music/the_end_piano.mp3';
 audio.play;
+
+let hit1 = new Audio();
+hit1.src = '.\audio\effects\hit1.mp3';
+hit1.play;
 // Sound
 // Documentation:
 //!
@@ -43,7 +45,6 @@ audio.play;
 
 
 
-//imgs.push("img/backgrounds/virus1.jpeg");
 imgs.push("img/backgrounds/virus2.jpg");
 imgs.push("img/backgrounds/virus3.webp");
 imgs.push("img/backgrounds/virus4.jpg");
@@ -66,9 +67,7 @@ let str10 = "are on their way to The Last City."
 let str11 = "If the gates are breached all hope for humanity is lost."
 let str12 = "Be prepared for the longest day of your life"
 
-
-
-const hero = new Character(200, 0, 5);
+const hero = new Character(200, 0, 3);
 
 const playerSprite = new Image();
 playerSprite.src = "img/characters/hero.png";
@@ -98,11 +97,11 @@ class Enemy {
     this.x = Math.random() * (canvas.width - 64);
     this.y = 0;
     this.frameX = 0; //Frame of spriteSheet
-    this.frameY = 3;
+    this.frameY = 10;
     this.speed = _speed;
     this.enemyInterval = _enemyInterval;
     this.enemyTimer = 0;
-    this.enemySelect = 0; //default enemy selection
+    this.enemySelect = _enemySelect; //Enemy Sprites
     this.radius = 20;
     this.health = _health;
     //this.direction = Math.random - 0,5 // between 0,5 and -0,5
@@ -113,7 +112,7 @@ class Enemy {
     show(){
         ctx.beginPath();
         ctx.arc(this.x , this.y, this.radius, 0, 2 * Math.PI, false); //int x, int y, int width, int height, int startAngle, int arcAngle
-        ctx.fillStyle = "rgb(0, 255, 0)";
+        ctx.fillStyle = "rgba(0, 255, 0, 0)";
         ctx.fill();
 
         ctx.fillStyle = "rgb(255, 0, 0)";
@@ -152,7 +151,7 @@ class Shot {
     show(){
         ctx.beginPath();
         ctx.arc(this.x , this.y, this.radius, 0, 2 * Math.PI, false); //int x, int y, int width, int height, int startAngle, int arcAngle
-        ctx.fillStyle = "rgb(255, 0, 0)";
+        ctx.fillStyle = "rgba(255, 0, 0, 1)";
         ctx.fill();
 
     }
@@ -242,6 +241,15 @@ document.addEventListener('keyup', (e) => {
         hero.frameX = 0;
     }
 }
+function handleEnemyFrame(){
+    for (let i = 0; i < enemies.length; i++){
+        if (enemies[i].frameX < 8) {
+            enemies[i].frameX++
+        } else {
+            enemies[i].frameX = 0;
+        }
+    }
+}
 
 let gameStats = {
     // cityHealth: 3,
@@ -317,11 +325,6 @@ let gameLevelStats = [
 
 ];
 
-
-
-
-
-
 // Covid19 – The Last Hope
 // The year is 2072 and the covid19 virus has been causing havac on the Earth for more than 5 decades.
 // Throughout the year the virus has mutated countless of times and more than 99% of earth population is currently infected with the virus… 
@@ -341,11 +344,13 @@ function animate(timeStamp){
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
 
+    //Background rotation
+    const img = document.getElementById("imgVirus")
+    img.setAttribute("src", imgs[Math.floor(timeStamp / 5000 % imgs.length)]) //Math.floor(Math.random() * imgs.length)
+
     //Intro
     if (gameStarted === false){
-        //Background rotation - every 10 sec.
-        const img = document.getElementById("imgVirus")
-        img.setAttribute("src", imgs[Math.floor(timeStamp / 10000 % imgs.length)]) //Math.floor(Math.random() * imgs.length)
+        
         
 
         //Text
@@ -383,9 +388,8 @@ function animate(timeStamp){
         ctx.fillStyle = 'grey';
         ctx.fillRect(0, canvas.height-100, scoreBoard.width, scoreBoard.height)
 
-        ctx.drawImage(bgHighway, 0, 300, canvas.width , 300)
+        ctx.drawImage(cityStreet, 0, 0, canvas.width , 600)
         ctx.drawImage(bgCity, 0, 400, canvas.width , 200)
-        ctx.drawImage(bgForest, 0, 0, canvas.width , 300)
         
         //Hero
             drawSprite(playerSprite, hero.width * hero.frameX, hero.height * hero.frameY, hero.width, hero.height, hero.x, hero.y, hero.width, hero.height)
@@ -406,6 +410,7 @@ function animate(timeStamp){
                 let distance = Math.sqrt(Math.pow((shots[i].x - enemies[j].x),2) + Math.pow((shots[i].y - enemies[j].y),2));
                 if (distance <= (shots[i].radius + enemies[j].radius)){
                     //ENEMY HIT
+                    //hit1.play;
                     shots.splice(i, 1);
                     enemies[j].health--
                         if(enemies[j].health <= 0){
@@ -426,8 +431,9 @@ function animate(timeStamp){
             gameLevelStats[gameLevelCurrent].enemyCount++  
         }
         for (let i = 0; i < enemies.length; i++){
-            //drawSprite(playerSprite, hero.width * hero.frameX, hero.height * hero.frameY, hero.width, hero.height, hero.x, hero.y, hero.width, hero.height)
+
             enemies[i].show();
+            drawSprite(characterSprites[enemies[i].enemySelect], enemies[i].width * enemies[i].frameX, enemies[i].height * enemies[i].frameY, enemies[i].width, enemies[i].height, enemies[i].x - 32, enemies[i].y - 32, enemies[i].width, enemies[i].height)
             enemies[i].move();
 
             if (i === enemies.length - 1 && 
@@ -453,8 +459,7 @@ function animate(timeStamp){
             gameLevelStats[gameLevelCurrent].cityHealth > 0){ //City is still alive
             
             gameLevelStats[gameLevelCurrent].levelCompleted = true;
-            console.log("gameLevel" + gameLevelCurrent);
-        
+            
         } else if (gameLevelStats[gameLevelCurrent].cityHealth <= 0){
             ctx.fillStyle = "rgb(255, 0, 0)";
             ctx.font = "35px Comic Sans MS strong";
@@ -487,10 +492,12 @@ function animate(timeStamp){
                 }
             }
             });
-        
     };
-handlePlayerFrame();
-requestAnimationFrame(animate);
+
+    handlePlayerFrame();
+    handleEnemyFrame();
+
+    requestAnimationFrame(animate);
 };
 animate(0);
 
