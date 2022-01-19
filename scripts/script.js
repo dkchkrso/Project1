@@ -1,5 +1,8 @@
 import Character from "./character.js"
 
+const auTheLastCity = new Audio("./audio/music/theLastCity.mp3"); 
+
+
 const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d");
 canvas.width = 600;
@@ -7,61 +10,74 @@ canvas.height = 700;
 
 const bgCity = new Image();  // width, height
 bgCity.src = "img/backgrounds/city.png";
-const cityStreet = new Image();  // width, height
-cityStreet.src = "img/Utility/cityStreet.jpg";
+const bgCityStreet = new Image();  // width, height
+bgCityStreet.src = "img/Utility/cityStreet.jpg";
+const bgAudio = new Image();  // width, height
+bgAudio.src = "img/Utility/audioOn.png";
+
 
 const keys = [];
 const shots = [];
 const enemies = [];
 const imgs = [];
 
-//!new Audio('audio/music/the_end_piano.mp3').play()
-//!
-let audio = new Audio();
-audio.src = 'audio/music/the_end_piano.mp3';
-audio.play;
+//Music
+//const auTheLastCity = new Audio("./audio/music/theLastCity.mp3"); 
+const auLose = new Audio("./audio/music/lose.mp3");
 
-let hit1 = new Audio();
-hit1.src = '.\audio\effects\hit1.mp3';
-hit1.play;
-// Sound
-// Documentation:
-//!
-//!
+//Effects
+const auDie = new Audio("./audio/effects/die1.mp3");
+const auHits = [];
+const auHit1 = new Audio("./audio/effects/hit1.mp3");
+const auHit2 = new Audio("./audio/effects/hit2.mp3");
+const auHit3 = new Audio("./audio/effects/hit3.mp3");
+const auHit4 = new Audio("./audio/effects/hit4.mp3");
+const auHit5 = new Audio("./audio/effects/hit5.mp3");
+auHits.push(auHit1, auHit2, auHit3, auHit4, auHit5)
+const auShot = new Audio("./audio/effects/shot.wav");
+const auWon = new Audio("./audio/effects/won.wav");
 
+const auScreams = [];
+const auScream1 = new Audio("./audio/effects/scream1.ogg");
+const auScream2 = new Audio("./audio/effects/scream2.ogg");
+const auScream3 = new Audio("./audio/effects/scream3.ogg");
+const auScream4 = new Audio("./audio/effects/scream4.ogg");
+auScreams.push(auScream1, auScream2, auScream3, auScream4);
 
-// Sound takes three arguments. The source url of the sound, the volume (from 0 to 100), and the loop (true to loop, false not to loop).
-// stop allow to start after (contrary to remove).
-// init re-set the argument volume and loop.
+const auAarghs = [];
+const auAargh1 = new Audio("./audio/effects/aargh1.ogg");
+const auAargh2 = new Audio("./audio/effects/aargh2.ogg");
+const auAargh3 = new Audio("./audio/effects/aargh3.ogg");
+const auAargh4 = new Audio("./audio/effects/aargh4.ogg");
+const auAargh5 = new Audio("./audio/effects/aargh5.ogg");
+const auAargh6 = new Audio("./audio/effects/aargh6.ogg");
+const auAargh7 = new Audio("./audio/effects/aargh7.ogg");
+auAarghs.push(auAargh1, auAargh2, auAargh3, auAargh4, auAargh5, auAargh6, auAargh7);
 
-// Example:
-
-// var foo = new Sound("url", 100, true);
-// foo.start();
-// foo.stop();
-// foo.start();
-// foo.init(100, false);
-// foo.remove();
-
-
-
-imgs.push("img/backgrounds/virus2.jpg");
 imgs.push("img/backgrounds/virus3.webp");
-imgs.push("img/backgrounds/virus4.jpg");
-imgs.push("img/backgrounds/virus5.webp");
 imgs.push("img/backgrounds/virus6.jpg");
 imgs.push("img/backgrounds/virus7.jpg");
 imgs.push("img/backgrounds/virus8.png");
+imgs.push("img/backgrounds/virus11.jpg");
+imgs.push("img/backgrounds/virus12.jpg");
+imgs.push("img/backgrounds/virus13.jpg");
+imgs.push("img/backgrounds/virus4.jpg");
+imgs.push("img/backgrounds/virus5.webp");
+imgs.push("img/backgrounds/virus9.jpg");
+imgs.push("img/backgrounds/virus1.jpg");
+imgs.push("img/backgrounds/virus2.jpg");
+imgs.push("img/backgrounds/virus10.jpg");
+imgs.push("img/backgrounds/virus14.jpg");
 
-const gameTitle = "Covid19 - The Last Hope";
+const gameTitle = "The Last Hope";
 let str1 = gameTitle
-let str2 = "The year is 2072 and the covid19 virus has been" 
-let str3 = "causing havac on the Earth for more than 5 decades."
-let str4 = "Throughout the year the virus has mutated countless of times"
-let str5 = "and more than 99% of earth population is currently infected with the virus…"
+let str2 = "The year is 2069 and the Covid19 virus has been" 
+let str3 = "causing havac on the Earth for 5 decades."
+let str4 = "Throughout the years the virus has mutated countless of times and more"
+let str5 = "than 99% of the earth population is currently infected with the virus…"
 let str6 = "Only one city remains uninfected with the virus - The Last Hope."
 let str7 = "You are one of the citizens in The Last Hope and you have been tasked"
-let str8 = "to guard the northern gates for the day."
+let str8 = "to guard the northern gates."
 let str9 = "Little do you know that a swarm of infected people" 
 let str10 = "are on their way to The Last City."
 let str11 = "If the gates are breached all hope for humanity is lost."
@@ -75,16 +91,13 @@ playerSprite.src = "img/characters/hero.png";
 const characterSprites = []
 const bowlerSprite = new Image();
 bowlerSprite.src = "img/characters/bowler.png"
-characterSprites.push(bowlerSprite)
 const greenSprite = new Image();
 greenSprite.src = "img/characters/green.png"
-characterSprites.push(greenSprite)
 const redCoinSprite = new Image();
 redCoinSprite.src = "img/characters/redCoin.png"
-characterSprites.push(redCoinSprite)
 const redSprite = new Image();
 redSprite.src = "img/characters/red.png"
-characterSprites.push(redSprite)
+characterSprites.push(bowlerSprite, greenSprite, redCoinSprite, redSprite)
 
 function drawSprite(img, sX, sY, sW, sH, dX, dY, dW, dH){
     ctx.drawImage(img, sX, sY, sW, sH, dX, dY, dW, dH)
@@ -94,10 +107,10 @@ class Enemy {
     constructor(_x, _y, _speed, _health, _enemyInterval, _enemySelect){
     this.width = 64; //  832 / 13 = 
     this.height = 64; //  1344 /21
-    this.x = Math.random() * (canvas.width - 64);
-    this.y = 0;
+    this.x = _x; //Math.random() * (canvas.width - 64);
+    this.y = _y; //0;
     this.frameX = 0; //Frame of spriteSheet
-    this.frameY = 10;
+    this.frameY = 10; //walking down
     this.speed = _speed;
     this.enemyInterval = _enemyInterval;
     this.enemyTimer = 0;
@@ -115,7 +128,7 @@ class Enemy {
         ctx.fillStyle = "rgba(0, 255, 0, 0)";
         ctx.fill();
 
-        ctx.fillStyle = "rgb(255, 0, 0)";
+        ctx.fillStyle = "rgb(255, 255, 255)";
         ctx.font = "22px Comic Sans MS";
         ctx.textAlign = "center";
         ctx.fillText(this.health, this.x, this.y - 25);
@@ -146,12 +159,12 @@ class Shot {
         this.speed = _speed;
         this.frequency = _frequency;
         this.creationTime = Date.now();
-        this.radius = 8;
+        this.radius = 4;
     }
     show(){
         ctx.beginPath();
         ctx.arc(this.x , this.y, this.radius, 0, 2 * Math.PI, false); //int x, int y, int width, int height, int startAngle, int arcAngle
-        ctx.fillStyle = "rgba(255, 0, 0, 1)";
+        ctx.fillStyle = "rgba(0, 0, 0, 1)";
         ctx.fill();
 
     }
@@ -170,7 +183,7 @@ class Shot {
 //smash * 1 [21]
 
 function actionHero(){
-    if (keys[38] && hero.y > 250 || keys[87] && hero.y > 250){ //UP(38) W(87)
+    if (keys[38] && hero.y > 150 || keys[87] && hero.y > 150){ //UP(38) W(87)
         hero.y -= hero.speed;
         hero.frameY = 8;
         hero.moving = true;
@@ -213,6 +226,7 @@ document.addEventListener('keydown', (e) => {
                 let shot = new Shot(10, 1);
                 shots.push(shot);
                 keyStatus = "down";
+                auShot.play();
                 break;
 
             
@@ -221,6 +235,7 @@ document.addEventListener('keydown', (e) => {
                     let shot = new Shot(10, 1)
                     shots.push(shot);
                     keyStatus = "down";
+                    auShot.play();
                 }    
         }
     }
@@ -271,59 +286,40 @@ let gameLevelCurrent = 0;
 //         this.levelCompleted = false
 //     }
 // }
-
-let gameLevelStats = [
-    {
-    levelNumber: 0, // intro --> controls
-    cityHealth: 5,
-    allowedEnemiesOnScreen: 1000,
-    enemyCount: 0,
-    levelEnemiesTotal: 3,
-    enemySpeed: 0.5,
-    enemyHealth: 3,
-    levelCompleted: false
-    },
-    {
-     levelNumber: 1,
-     cityHealth: 5,
-     allowedEnemiesOnScreen: 1000,
-     enemyCount: 0,
-     levelEnemiesTotal: 10,
-     enemySpeed: 1,
-     enemyHealth: 3,
-     levelCompleted: false
-    },
-    {
-     levelNumber: 2,
-     cityHealth: 5,
-     allowedEnemiesOnScreen: 1000,
-     enemyCount: 0,
-     levelEnemiesTotal: 20,
-     enemySpeed: 1.5,
-     enemyHealth: 3,
-     levelCompleted: false
-    },
-    {
-    levelNumber: 3,
-    cityHealth: 5,
-    allowedEnemiesOnScreen: 1000,
-    enemyCount: 0,
-    levelEnemiesTotal: 20,
-    enemySpeed: 1.5,
-    enemyHealth: 3,
-    levelCompleted: false
-    },
-    {
-    levelNumber: 4,
-    cityHealth: 5,
-    allowedEnemiesOnScreen: 1000,
-    enemyCount: 0,
-    levelEnemiesTotal: 20,
-    enemySpeed: 1.5,
-    levelCompleted: false
+class GameLevel {
+    constructor(_levelNumber, _cityHealth, _levelEnemiesTotal, _enemySpeed, _enemyHealth){
+        this.levelNumber = _levelNumber;
+        this.cityHealth = _cityHealth;
+        this.allowedEnemiesOnScreen = 1000;
+        this.enemyCount = 0;
+        this.levelEnemiesTotal =_levelEnemiesTotal;
+        this.enemySpeed = _enemySpeed;
+        this.enemyHealth = _enemyHealth;
+        this.levelCompleted = false;
     }
+}
+let gameLevelStats = [];
 
-];
+function randomNumber(range, lower){return Math.floor(Math.random() * range + lower)}
+//_levelNumber, _cityHealth, _levelEnemiesTotal, _enemySpeed, _enemyHealth
+const level0 = new GameLevel(0,3,2,0.3,randomNumber(2,1))
+const level1 = new GameLevel(1,3,5,0.5,randomNumber(2,1))
+const level2 = new GameLevel(2,3,7,0.7,randomNumber(4,1))
+const level3 = new GameLevel(3,10,30,1.2,randomNumber(2,1))
+const level4 = new GameLevel(4,1,1,0.2,100)
+gameLevelStats.push(level0, level1, level2, level3, level4);
+
+for (let i = gameLevelStats.length + 1; i <= 1000; i++){
+    let levelNumber = i;
+    let cityHealth = Math.floor(i + i * 0.3) //level number + 30%
+    //! random number enemy count  
+    let levelEnemiesTotal = randomNumber(i + 10, i + 1.2);
+    let enemySpeed = 1 + i/20; //5% increase
+    let enemyHealth = Math.floor(5 + i/20);
+
+    const levelX = new GameLevel(levelNumber,cityHealth,levelEnemiesTotal,enemySpeed,enemyHealth)
+    gameLevelStats.push(levelX);
+    }
 
 // Covid19 – The Last Hope
 // The year is 2072 and the covid19 virus has been causing havac on the Earth for more than 5 decades.
@@ -335,7 +331,6 @@ let gameLevelStats = [
 // Press spacebar to shoot
 // City Healds is displayed in the bottom of the screen 
 
-
 let gameStarted = false;
 
 let lastTime = 1;
@@ -346,12 +341,20 @@ function animate(timeStamp){
 
     //Background rotation
     const img = document.getElementById("imgVirus")
-    img.setAttribute("src", imgs[Math.floor(timeStamp / 5000 % imgs.length)]) //Math.floor(Math.random() * imgs.length)
+    img.setAttribute("src", imgs[Math.floor(timeStamp / 8000 % imgs.length)]) //Math.floor(Math.random() * imgs.length)
 
     //Intro
     if (gameStarted === false){
         
-        
+        // window.onload=function(){
+        //     let r = confirm("Would you like to auto play music?");
+        //     if (r == true){
+        //         auTheLastCity.play();
+        //     console.log("playering " + auTheLastCity)
+        //     }
+        // }
+
+        auTheLastCity.play();
 
         //Text
         ctx.fillStyle = "rgb(255, 255, 255)";
@@ -383,13 +386,15 @@ function animate(timeStamp){
             });
 
     } else {    
-    
+
+        
         //Background and Scoreboard
         ctx.fillStyle = 'grey';
-        ctx.fillRect(0, canvas.height-100, scoreBoard.width, scoreBoard.height)
+        ctx.fillRect(0, canvas.height - 100, scoreBoard.width, scoreBoard.height)
 
-        ctx.drawImage(cityStreet, 0, 0, canvas.width , 600)
+        ctx.drawImage(bgCityStreet, 0, 0, canvas.width , 600)
         ctx.drawImage(bgCity, 0, 400, canvas.width , 200)
+        //ctx.drawImage(bgAudio, 550, 10, 40 , 40)
         
         //Hero
             drawSprite(playerSprite, hero.width * hero.frameX, hero.height * hero.frameY, hero.width, hero.height, hero.x, hero.y, hero.width, hero.height)
@@ -410,11 +415,13 @@ function animate(timeStamp){
                 let distance = Math.sqrt(Math.pow((shots[i].x - enemies[j].x),2) + Math.pow((shots[i].y - enemies[j].y),2));
                 if (distance <= (shots[i].radius + enemies[j].radius)){
                     //ENEMY HIT
-                    //hit1.play;
+                    auHits[Math.floor(Math.random() * 5)].play();
                     shots.splice(i, 1);
                     enemies[j].health--
                         if(enemies[j].health <= 0){
                             enemies.splice(j, 1);
+                            //auDie.play()
+                            auAarghs[randomNumber(auAarghs.length,0)].play();
                         }
                     break;
                 }
@@ -426,7 +433,7 @@ function animate(timeStamp){
         if (!enemies.length && 
             gameLevelStats[gameLevelCurrent].enemyCount < gameLevelStats[gameLevelCurrent].levelEnemiesTotal && 
             gameLevelStats[gameLevelCurrent].levelCompleted === false){
-            const enemy = new Enemy (200, 100, gameLevelStats[gameLevelCurrent].enemySpeed, gameLevelStats[gameLevelCurrent].enemyHealth, 50, Math.floor((Math.random() * (characterSprites.length))))
+            const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed, gameLevelStats[gameLevelCurrent].enemyHealth, 50, Math.floor((Math.random() * (characterSprites.length))))
             enemies.push(enemy);
             gameLevelStats[gameLevelCurrent].enemyCount++  
         }
@@ -440,7 +447,7 @@ function animate(timeStamp){
                     enemies.length < gameLevelStats[gameLevelCurrent].allowedEnemiesOnScreen && 
                     enemies[i].enemyInterval < enemies[i].enemyTimer &&
                     gameLevelStats[gameLevelCurrent].enemyCount < gameLevelStats[gameLevelCurrent].levelEnemiesTotal){
-                const enemy = new Enemy(200, 100, gameLevelStats[gameLevelCurrent].enemySpeed, gameLevelStats[gameLevelCurrent].enemyHealth, 50, Math.floor((Math.random() * (characterSprites.length))))
+                const enemy = new Enemy(Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed, gameLevelStats[gameLevelCurrent].enemyHealth, 50, Math.floor((Math.random() * (characterSprites.length))))
                 enemies.push(enemy);
                 gameLevelStats[gameLevelCurrent].enemyCount++
             } else {
@@ -450,6 +457,8 @@ function animate(timeStamp){
             if (enemies[i].y > 550){
                 enemies.splice(i, 1);
                 gameLevelStats[gameLevelCurrent].cityHealth--;
+                auScreams[Math.floor(Math.random() * 4)].play();
+
             }
         }
 
@@ -458,6 +467,11 @@ function animate(timeStamp){
             enemies.length === 0 && //enemies array is empty
             gameLevelStats[gameLevelCurrent].cityHealth > 0){ //City is still alive
             
+            //Level Completed    
+            if (gameLevelStats[gameLevelCurrent].levelCompleted === false){
+                auWon.play();
+            }
+
             gameLevelStats[gameLevelCurrent].levelCompleted = true;
             
         } else if (gameLevelStats[gameLevelCurrent].cityHealth <= 0){
@@ -467,12 +481,17 @@ function animate(timeStamp){
             //ctx.rotate(20 * Math.PI / 180);
             ctx.fillText("The city has been infected with Corona", 300, 400);
             ctx.fillText("You Lose", 300, 350);
+            auTheLastCity.pause();
+            auLose.play();
             
             // const youLose = new Image();
             // youLose.src = "img/Utility/youLose.png";
             //ctx.drawImage(youLose, 0, 100, canvas.width , 400)
         }
-        ctx.fillText("City Health: " + gameLevelStats[gameLevelCurrent].cityHealth, 100, 620);
+        ctx.fillStyle = "rgb(0, 0, 0)";
+        ctx.font = "35px Comic Sans MS strong";
+        ctx.textAlign = "center";
+        ctx.fillText("City Health: " + gameLevelStats[gameLevelCurrent].cityHealth, 100, 650);
 
         if (gameLevelStats[gameLevelCurrent].levelCompleted === true){
             
