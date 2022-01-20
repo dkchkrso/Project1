@@ -639,6 +639,10 @@ function animate(timeStamp){
  
         if (gameLevelStats[gameLevelCurrent].levelCompleted === true){
             
+            if (gameLevelCurrent === 0){
+                ctx.drawImage(bgCityStreet, 0, 0, canvas.width , 600)
+            }
+            
             ctx.fillStyle = "rgb(255, 255, 255)";
             ctx.font = "25px Comic Sans MS";
             ctx.textAlign = "center";
