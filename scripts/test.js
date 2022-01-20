@@ -1,0 +1,1 @@
+console.log(Math.sin(Math.random()))
