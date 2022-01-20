@@ -3,9 +3,9 @@
     padding: 0;
 }
 
-/* body {
-  background-image: url('img\backgrounds\virus2.jpg');
-} */
+body {
+  font-family: 'Indie Flower', cursive;
+}
 
 #canvas1 {
     width: 600px;
@@ -26,3 +26,4 @@ img{
   margin: 0 auto;
   padding: 0;
 }
+

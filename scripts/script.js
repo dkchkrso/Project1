@@ -12,6 +12,8 @@ const bgCity = new Image();  // width, height
 bgCity.src = "img/backgrounds/city.png";
 const bgCityStreet = new Image();  // width, height
 bgCityStreet.src = "img/Utility/cityStreet.jpg";
+const bgMetalPlate = new Image();  // width, height
+bgMetalPlate.src = "img/Utility/metalPlate.png";
 const bgAudio = new Image();  // width, height
 bgAudio.src = "img/Utility/audioOn.png";
 
@@ -89,15 +91,45 @@ const playerSprite = new Image();
 playerSprite.src = "img/characters/hero.png";
 
 const characterSprites = []
-const bowlerSprite = new Image();
-bowlerSprite.src = "img/characters/bowler.png"
-const greenSprite = new Image();
-greenSprite.src = "img/characters/green.png"
-const redCoinSprite = new Image();
-redCoinSprite.src = "img/characters/redCoin.png"
-const redSprite = new Image();
-redSprite.src = "img/characters/red.png"
-characterSprites.push(bowlerSprite, greenSprite, redCoinSprite, redSprite)
+const Sprite1 = new Image();
+const Sprite2 = new Image();
+const Sprite3 = new Image();
+const Sprite4 = new Image();
+const Sprite5 = new Image();
+const Sprite6 = new Image();
+const Sprite7 = new Image();
+const Sprite8 = new Image();
+const Sprite9 = new Image();
+const Sprite10 = new Image();
+const Sprite11 = new Image();
+const Sprite12 = new Image();
+const Sprite13 = new Image();
+const Sprite14 = new Image();
+const Sprite15 = new Image();
+const Sprite16 = new Image();
+const Sprite17 = new Image();
+const Sprite18 = new Image();
+
+Sprite1.src = "img/characters/1.png"
+Sprite2.src = "img/characters/2.png"
+Sprite3.src = "img/characters/3.png"
+Sprite4.src = "img/characters/4.png"
+Sprite5.src = "img/characters/5.png"
+Sprite6.src = "img/characters/6.png"
+Sprite7.src = "img/characters/7.png"
+Sprite8.src = "img/characters/8.png"
+Sprite9.src = "img/characters/9.png"
+Sprite10.src = "img/characters/10.png"
+Sprite11.src = "img/characters/11.png"
+Sprite12.src = "img/characters/12.png"
+Sprite13.src = "img/characters/13.png"
+Sprite14.src = "img/characters/14.png"
+Sprite15.src = "img/characters/15.png"
+Sprite16.src = "img/characters/16.png"
+Sprite17.src = "img/characters/17.png"
+Sprite18.src = "img/characters/18.png"
+
+characterSprites.push(Sprite1, Sprite2, Sprite3, Sprite4, Sprite5, Sprite6, Sprite7, Sprite8, Sprite9, Sprite10, Sprite11, Sprite12, Sprite12, Sprite13, Sprite14, Sprite15, Sprite16, Sprite17, Sprite18)
 
 function drawSprite(img, sX, sY, sW, sH, dX, dY, dW, dH){
     ctx.drawImage(img, sX, sY, sW, sH, dX, dY, dW, dH)
@@ -300,10 +332,10 @@ class GameLevel {
 }
 let gameLevelStats = [];
 
-function randomNumber(range, lower){return Math.floor(Math.random() * range + lower)}
+function randomNumber(range, lower){return Math.floor(Math.random() * range + lower)} //return Math.floor(Math.random() * (max - min + 1) + min
 //_levelNumber, _cityHealth, _levelEnemiesTotal, _enemySpeed, _enemyHealth
-const level0 = new GameLevel(0,3,2,0.3,randomNumber(2,1))
-const level1 = new GameLevel(1,3,5,0.5,randomNumber(2,1))
+const level0 = new GameLevel(0,3,5,0.2,1)
+const level1 = new GameLevel(1,3,5,0.3,randomNumber(2,1))
 const level2 = new GameLevel(2,3,7,0.7,randomNumber(4,1))
 const level3 = new GameLevel(3,10,30,1.2,randomNumber(2,1))
 const level4 = new GameLevel(4,1,1,0.2,100)
@@ -331,29 +363,40 @@ for (let i = gameLevelStats.length + 1; i <= 1000; i++){
 // Press spacebar to shoot
 // City Healds is displayed in the bottom of the screen 
 
-let gameStarted = false;
+let gameScreen = 1;
 
 let lastTime = 1;
 function animate(timeStamp){
     ctx.clearRect(0,0,canvas.width, canvas.height)
-    const deltaTime = timeStamp - lastTime;
+    //const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
-
     //Background rotation
     const img = document.getElementById("imgVirus")
     img.setAttribute("src", imgs[Math.floor(timeStamp / 8000 % imgs.length)]) //Math.floor(Math.random() * imgs.length)
 
     //Intro
-    if (gameStarted === false){
+    switch (gameScreen) {
+        case 1:
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.font = "40px Comic Sans MS";
+            ctx.textAlign = "center";
+            ctx.fillText("CLICK TO ENTER", 300, 150);
+            
+            //Mouse Click
+            canvas.addEventListener("click", () => {
+                if (gameScreen === 1 ){
+                gameScreen = 2;
+                }
+            });
+            //Any key
+            document.addEventListener('keydown', (e) => {
+                if (gameScreen === 1 ){
+                gameScreen = 2;
+                }
+            });
+            break;
+        case 2:
         
-        // window.onload=function(){
-        //     let r = confirm("Would you like to auto play music?");
-        //     if (r == true){
-        //         auTheLastCity.play();
-        //     console.log("playering " + auTheLastCity)
-        //     }
-        // }
-
         auTheLastCity.play();
 
         //Text
@@ -376,26 +419,57 @@ function animate(timeStamp){
 
         //Mouse Click
         canvas.addEventListener("click", () => {
-            gameStarted = true;
+            if (gameScreen === 2 ){
+            gameScreen = 3;
+            }
         });
         //Enter Key
         document.addEventListener('keydown', (e) => {
             if (e.keyCode === 13){
-                gameStarted = true;
+                if (gameScreen === 2 ){
+                gameScreen = 3;
+                }
             }
             });
-
-    } else {    
-
+        break;
+    case 3:    
         
+            
+    
         //Background and Scoreboard
-        ctx.fillStyle = 'grey';
-        ctx.fillRect(0, canvas.height - 100, scoreBoard.width, scoreBoard.height)
-
+        //context.drawImage(img,x,y,width,height);
+        ctx.fillStyle = 'black';
+        //ctx.fillRect(0, canvas.height - 100, scoreBoard.width, scoreBoard.height)
+        ctx.drawImage(bgMetalPlate, 0, canvas.height - 102, scoreBoard.width, scoreBoard.height)
         ctx.drawImage(bgCityStreet, 0, 0, canvas.width , 600)
         ctx.drawImage(bgCity, 0, 400, canvas.width , 200)
         //ctx.drawImage(bgAudio, 550, 10, 40 , 40)
         
+        //!Userguide for Level 0
+        if (gameLevelCurrent === 0){
+            //enemies spawn area
+            ctx.lineWidth = 4;
+            
+            ctx.strokeStyle = "red";
+            ctx.strokeRect(20,20,560,100);
+            //ctx.fillStyle = "rgba(0, 0, 0, 1)";
+            
+            //hero baundery
+            ctx.strokeStyle = "blue";
+            ctx.strokeRect(20,200,560,400);
+
+            //hero
+            ctx.strokeStyle = "green";
+            ctx.strokeRect(250,530,100,100);
+
+            // ctx.fillRect(0, 0 , 400, scoreBoard.height)
+            // ctx.rect(20,20,150,100);
+            // ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            // ctx.fillRect(0, 0 , 400, scoreBoard.height)
+            // ctx.rect(20,20,150,100);
+        //     ctx.stroke();
+        }
+
         //Hero
             drawSprite(playerSprite, hero.width * hero.frameX, hero.height * hero.frameY, hero.width, hero.height, hero.x, hero.y, hero.width, hero.height)
             actionHero();
@@ -479,8 +553,8 @@ function animate(timeStamp){
             ctx.font = "35px Comic Sans MS strong";
             ctx.textAlign = "center";
             //ctx.rotate(20 * Math.PI / 180);
-            ctx.fillText("The city has been infected with Corona", 300, 400);
             ctx.fillText("You Lose", 300, 350);
+            ctx.fillText("The city has been infected", 300, 400);
             auTheLastCity.pause();
             auLose.play();
             
@@ -504,13 +578,14 @@ function animate(timeStamp){
             ctx.fillText(`Press ENTER to start level ${gameLevelStats[gameLevelCurrent].levelNumber + 1} `, 300, 450);
         }
 
-            document.addEventListener('keydown', (e) => {
-            if (e.keyCode === 13){
-                if ( gameLevelStats[gameLevelCurrent].levelCompleted === true){
-                         gameLevelCurrent++;
-                }
+        document.addEventListener('keydown', (e) => {
+        if (e.keyCode === 13){
+            if ( gameLevelStats[gameLevelCurrent].levelCompleted === true){
+                        gameLevelCurrent++;
             }
-            });
+        }
+        });
+        break;
     };
 
     handlePlayerFrame();
