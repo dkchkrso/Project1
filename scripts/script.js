@@ -172,7 +172,7 @@ import Character from "./character.js"
     imgs.push("img/backgrounds/virus6.jpg");
     imgs.push("img/backgrounds/virus7.jpg");
     imgs.push("img/backgrounds/virus8.png");
-    imgs.push("img/backgrounds/virus11.jpg");
+    //imgs.push("img/backgrounds/virus11.jpg");
     imgs.push("img/backgrounds/virus12.jpg");
     imgs.push("img/backgrounds/virus13.jpg");
     imgs.push("img/backgrounds/virus4.jpg");
