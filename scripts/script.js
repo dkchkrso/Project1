@@ -25,9 +25,10 @@ import Character from "./character.js"
         let gameLevelCurrent = 0;
         let gameScreen = 1;
         let enemiesRemoved = 0;
-        const cityHealthSet = 20
+        const cityHealthSet = 20;
         let cityHealthNoReset = cityHealthSet;
         let enemiesKilledTotal = 0;
+        
         
 
         let lastTime = 1;
@@ -36,6 +37,12 @@ import Character from "./character.js"
         function drawSprite(img, sX, sY, sW, sH, dX, dY, dW, dH){
             ctx.drawImage(img, sX, sY, sW, sH, dX, dY, dW, dH)
         }
+
+        function enemyCreation(range){
+            const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(range, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
+            enemies.push(enemy);
+        }
+
             //Classes
         class Enemy {
             constructor(_x, _y, _speed, _health, _enemyInterval, _enemySelect){
@@ -172,7 +179,7 @@ import Character from "./character.js"
     imgs.push("img/backgrounds/virus6.jpg");
     imgs.push("img/backgrounds/virus7.jpg");
     imgs.push("img/backgrounds/virus8.png");
-    //imgs.push("img/backgrounds/virus11.jpg");
+    //imgs.push("img/backgrounds/virus11.jpg"); 
     imgs.push("img/backgrounds/virus12.jpg");
     imgs.push("img/backgrounds/virus13.jpg");
     imgs.push("img/backgrounds/virus4.jpg");
@@ -318,34 +325,33 @@ function handleEnemyFrame(){
     }
 }
 
-
-
-
 function randomNumber(range, lower){return Math.floor(Math.random() * range + lower)} //return Math.floor(Math.random() * (max - min + 1) + min
 //_levelNumber, _cityHealth, _levelEnemiesTotal, _enemySpeed, _enemyHealth
 
 function generateLevels() {
     const level0 = new GameLevel(0,3,3,0.1,1)
-    const level1 = new GameLevel(1,3,5,0.2,randomNumber(5,1))
-    const level2 = new GameLevel(2,3,12,0.3,randomNumber(3,1))
-    const level3 = new GameLevel(3,3,30,0.2,randomNumber(2,1))
-    const level4 = new GameLevel(4,3,1,0.1,50)
+    const level1 = new GameLevel(1,3,5,0.4,randomNumber(5,1))
+    const level2 = new GameLevel(2,3,7,0.5,randomNumber(3,1))
+    const level3 = new GameLevel(3,3,5,0.3,randomNumber(2,1))
+    const level4 = new GameLevel(4,3,5,0.2,50)
     gameLevelStats.push(level0, level1, level2, level3, level4);
 
     for (let i = gameLevelStats.length + 1; i <= 10000; i++){
         let levelNumber = i;
         let cityHealth = 3 //obsolete
-        let levelEnemiesTotal = randomNumber(i, i);  
-        let enemySpeed = 0.2 + 0.5/20 * randomNumber(1, i); //5% increase per level * random level
+        let levelEnemiesTotal = randomNumber(i, i);
+        // if (levelNumber % 5 === 0){//Boss Level
+        //     levelEnemiesTotal = 1;
+        // }
+        let enemySpeed = 0.5 + 0.5/20 * randomNumber(1, i); //5% increase per level * random level
         let enemyHealth = randomNumber(1, i/5); //randomNumber(1, gameLevelStats[levelNumber]/5)
 
-        const levelX = new GameLevel(levelNumber,cityHealth,levelEnemiesTotal,enemySpeed,enemyHealth)
+        const levelX = new GameLevel(levelNumber, cityHealth, levelEnemiesTotal, enemySpeed, enemyHealth)
         gameLevelStats.push(levelX);
         }
     };
 
 generateLevels();
-//console.log(gameLevelStats);
 
 
 function animate(timeStamp){
@@ -499,14 +505,21 @@ function animate(timeStamp){
             }
             } 
         }
-
         //Enemies
         if (!enemies.length && 
             gameLevelStats[gameLevelCurrent].enemyCount < gameLevelStats[gameLevelCurrent].levelEnemiesTotal && 
             gameLevelStats[gameLevelCurrent].levelCompleted === false){
-              const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), gameLevelStats[gameLevelCurrent].enemyHealth, 50, Math.floor((Math.random() * (characterSprites.length))))
-//                const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(1, gameLevelCurrent), 50, Math.floor((Math.random() * (characterSprites.length))))
-            enemies.push(enemy);
+            //Enemy Creation
+            console.log("(gameLevelCurrent) % 5 " + (gameLevelCurrent) % 5) 
+            // if (gameLevelCurrent !== 0 && (gameLevelCurrent) % 5 === 0){ //BOSS Level
+
+                // const enemy = enemyCreation(100)
+            // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
+            // } else {
+                const enemy = enemyCreation(7)
+            // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
+            // }
+            // enemies.push(enemy);
 
             gameLevelStats[gameLevelCurrent].enemyCount++  
         }
@@ -520,9 +533,18 @@ function animate(timeStamp){
                     enemies.length < gameLevelStats[gameLevelCurrent].allowedEnemiesOnScreen && 
                     enemies[i].enemyInterval < enemies[i].enemyTimer &&
                     gameLevelStats[gameLevelCurrent].enemyCount < gameLevelStats[gameLevelCurrent].levelEnemiesTotal){
-                const enemy = new Enemy(Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), gameLevelStats[gameLevelCurrent].enemyHealth, 50, Math.floor((Math.random() * (characterSprites.length))))
-//                   const enemy = new Enemy(Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(1, gameLevelCurrent), 50, Math.floor((Math.random() * (characterSprites.length))))
-                enemies.push(enemy);
+                    //Enemy Creation
+                        // const enemy = new Enemy(Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), gameLevelStats[gameLevelCurrent].enemyHealth, 50, Math.floor((Math.random() * (characterSprites.length))))
+                //   const enemy = new Enemy(Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
+                // console.log(gameLevelCurrent)
+                // if (gameLevelCurrent !== 0 && (gameLevelCurrent) % 5 === 0){ //BOSS Level 
+                    const enemy = enemyCreation(7)
+                // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
+                // } else {
+                    // const enemy = enemyCreation(7)
+                // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
+                // }
+                // enemies.push(enemy);
                 gameLevelStats[gameLevelCurrent].enemyCount++
             } else {
                 enemies[i].enemyTimer++
@@ -533,7 +555,6 @@ function animate(timeStamp){
                 cityHealthNoReset--;
                 enemiesRemoved++
                 auScreams[Math.floor(Math.random() * 4)].play();
-
             }
         }
 
