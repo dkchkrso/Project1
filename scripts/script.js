@@ -332,7 +332,7 @@ function generateLevels() {
     const level4 = new GameLevel(4,3,1,0.1,50)
     gameLevelStats.push(level0, level1, level2, level3, level4);
 
-    for (let i = gameLevelStats.length + 1; i <= 1000; i++){
+    for (let i = gameLevelStats.length + 1; i <= 10000; i++){
         let levelNumber = i;
         let cityHealth = 3 //obsolete
         let levelEnemiesTotal = randomNumber(i, i);  
