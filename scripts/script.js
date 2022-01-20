@@ -16,12 +16,17 @@ const bgMetalPlate = new Image();  // width, height
 bgMetalPlate.src = "img/Utility/metalPlate.png";
 const bgAudio = new Image();  // width, height
 bgAudio.src = "img/Utility/audioOn.png";
-
-
+const imgArrowKeys = new Image();
+imgArrowKeys.src = "img/Utility/arrowKeys.png"
+const imgSpaceBar = new Image();
+imgSpaceBar.src = "img/Utility/spaceBar.png"
 const keys = [];
 const shots = [];
 const enemies = [];
 const imgs = [];
+
+let highScoreEnemiesKilledTotal = 0;
+let highScoreGameLevel = 0;
 
 //Music
 //const auTheLastCity = new Audio("./audio/music/theLastCity.mp3"); 
@@ -330,29 +335,36 @@ class GameLevel {
         this.levelCompleted = false;
     }
 }
+const cityHealthSet = 20
+let cityHealthNoReset = cityHealthSet;
+let enemiesKilledTotal = 0;
 let gameLevelStats = [];
 
 function randomNumber(range, lower){return Math.floor(Math.random() * range + lower)} //return Math.floor(Math.random() * (max - min + 1) + min
 //_levelNumber, _cityHealth, _levelEnemiesTotal, _enemySpeed, _enemyHealth
-const level0 = new GameLevel(0,3,5,0.2,1)
-const level1 = new GameLevel(1,3,5,0.3,randomNumber(2,1))
-const level2 = new GameLevel(2,3,7,0.7,randomNumber(4,1))
-const level3 = new GameLevel(3,10,30,1.2,randomNumber(2,1))
-const level4 = new GameLevel(4,1,1,0.2,100)
-gameLevelStats.push(level0, level1, level2, level3, level4);
 
-for (let i = gameLevelStats.length + 1; i <= 1000; i++){
-    let levelNumber = i;
-    let cityHealth = Math.floor(i + i * 0.3) //level number + 30%
-    //! random number enemy count  
-    let levelEnemiesTotal = randomNumber(i + 10, i + 1.2);
-    let enemySpeed = 1 + i/20; //5% increase
-    let enemyHealth = Math.floor(5 + i/20);
+function generateLevels() {
+    const level0 = new GameLevel(0,3,3,0.2,1)
+    const level1 = new GameLevel(1,3,3,11.3,randomNumber(5,1))
+    const level2 = new GameLevel(2,3,7,0.7,randomNumber(3,1))
+    const level3 = new GameLevel(3,3,30,1,randomNumber(2,1))
+    const level4 = new GameLevel(4,3,1,0.2,100)
+    gameLevelStats.push(level0, level1, level2, level3, level4);
 
-    const levelX = new GameLevel(levelNumber,cityHealth,levelEnemiesTotal,enemySpeed,enemyHealth)
-    gameLevelStats.push(levelX);
-    }
+    for (let i = gameLevelStats.length + 1; i <= 1000; i++){
+        let levelNumber = i;
+        let cityHealth = 3 //obsolete
+        let levelEnemiesTotal = randomNumber(i, i);
+        let enemySpeed = 0.5 + 0.5/20 * randomNumber(1, i); //5% increase per level * random level
+        let enemyHealth = randomNumber(1, i/5);
 
+        const levelX = new GameLevel(levelNumber,cityHealth,levelEnemiesTotal,enemySpeed,enemyHealth)
+        gameLevelStats.push(levelX);
+        }
+    };
+
+generateLevels();
+console.log(gameLevelStats);
 // Covid19 – The Last Hope
 // The year is 2072 and the covid19 virus has been causing havac on the Earth for more than 5 decades.
 // Throughout the year the virus has mutated countless of times and more than 99% of earth population is currently infected with the virus… 
@@ -364,6 +376,7 @@ for (let i = gameLevelStats.length + 1; i <= 1000; i++){
 // City Healds is displayed in the bottom of the screen 
 
 let gameScreen = 1;
+let enemiesRemoved = 0;
 
 let lastTime = 1;
 function animate(timeStamp){
@@ -445,30 +458,39 @@ function animate(timeStamp){
         ctx.drawImage(bgCity, 0, 400, canvas.width , 200)
         //ctx.drawImage(bgAudio, 550, 10, 40 , 40)
         
-        //!Userguide for Level 0
         if (gameLevelCurrent === 0){
             //enemies spawn area
             ctx.lineWidth = 4;
-            
-            ctx.strokeStyle = "red";
-            ctx.strokeRect(20,20,560,100);
-            //ctx.fillStyle = "rgba(0, 0, 0, 1)";
-            
-            //hero baundery
-            ctx.strokeStyle = "blue";
-            ctx.strokeRect(20,200,560,400);
+            ctx.font = "26px Comic Sans MS strong";
+            ctx.textAlign = "left";
+            ctx.fillStyle = "white";
 
-            //hero
-            ctx.strokeStyle = "green";
-            ctx.strokeRect(250,530,100,100);
+            ctx.fillText("Use ", 70, 150)
+            ctx.drawImage(imgArrowKeys, 130, 110, 100,60)
+            ctx.fillText("to navigate your hero", 250, 150)
+            
+            // to navigate", 15, 220);
+            ctx.fillText("Use ", 70, 230);
+            ctx.drawImage(imgSpaceBar, 130, 190, 100, 50)
+            ctx.fillText("to shoot", 250, 230)
+            
+            ctx.textAlign = "center";
+            ctx.font = "20px Comic Sans MS strong";
+            ctx.fillText("Infected earthlings spawns from top of the screen", 300, 350);
+            ctx.fillText("If they reach the bottom of the screen your city loses health", 300, 380);
+            ctx.fillText("If your citys health reaches 0 the game is lost", 300, 410);
 
-            // ctx.fillRect(0, 0 , 400, scoreBoard.height)
-            // ctx.rect(20,20,150,100);
-            // ctx.strokeRect(0, 0, canvas.width, canvas.height);
-            // ctx.fillRect(0, 0 , 400, scoreBoard.height)
-            // ctx.rect(20,20,150,100);
-        //     ctx.stroke();
-        }
+            ctx.textAlign = "left";
+            ctx.fillText("Get the highest score in: ", 170, 460);
+            ctx.fillText(" - Maximum Killed Earthlings", 50, 500);
+            ctx.fillStyle =  "rgb(255, 255, 0)";
+            ctx.fillText("[Christopher Fagg --> 3.213 Kills]", 300, 500);
+            
+            ctx.fillStyle = "white";
+            ctx.fillText(" - Maximum Level Reached", 50, 520);
+            ctx.fillStyle = "rgb(255, 255, 0)";
+            ctx.fillText("[László Tarnai --> Level 320]", 300, 520);
+                    }
 
         //Hero
             drawSprite(playerSprite, hero.width * hero.frameX, hero.height * hero.frameY, hero.width, hero.height, hero.x, hero.y, hero.width, hero.height)
@@ -494,8 +516,9 @@ function animate(timeStamp){
                     enemies[j].health--
                         if(enemies[j].health <= 0){
                             enemies.splice(j, 1);
-                            //auDie.play()
                             auAarghs[randomNumber(auAarghs.length,0)].play();
+                            enemiesKilledTotal++;
+                            enemiesRemoved++;
                         }
                     break;
                 }
@@ -528,9 +551,10 @@ function animate(timeStamp){
                 enemies[i].enemyTimer++
             }
 
-            if (enemies[i].y > 550){
+            if (enemies[i].y > 570){
                 enemies.splice(i, 1);
-                gameLevelStats[gameLevelCurrent].cityHealth--;
+                cityHealthNoReset--;
+                enemiesRemoved++
                 auScreams[Math.floor(Math.random() * 4)].play();
 
             }
@@ -539,7 +563,7 @@ function animate(timeStamp){
         //Check Win
         if (gameLevelStats[gameLevelCurrent].enemyCount >= gameLevelStats[gameLevelCurrent].levelEnemiesTotal && //Number of enemies been present
             enemies.length === 0 && //enemies array is empty
-            gameLevelStats[gameLevelCurrent].cityHealth > 0){ //City is still alive
+            cityHealthNoReset > 0){ //City is still alive
             
             //Level Completed    
             if (gameLevelStats[gameLevelCurrent].levelCompleted === false){
@@ -547,26 +571,72 @@ function animate(timeStamp){
             }
 
             gameLevelStats[gameLevelCurrent].levelCompleted = true;
+
             
-        } else if (gameLevelStats[gameLevelCurrent].cityHealth <= 0){
+        } else if (cityHealthNoReset <= 0){
+            //Lose Game
             ctx.fillStyle = "rgb(255, 0, 0)";
             ctx.font = "35px Comic Sans MS strong";
             ctx.textAlign = "center";
             //ctx.rotate(20 * Math.PI / 180);
             ctx.fillText("You Lose", 300, 350);
             ctx.fillText("The city has been infected", 300, 400);
+            ctx.fillText("Press ENTER to restart the gem", 300, 450);
             auTheLastCity.pause();
             auLose.play();
+
+            enemies.splice(0, enemies.length); 
+            
+            //Check high score 
+            if (enemiesKilledTotal > highScoreEnemiesKilledTotal){
+                highScoreEnemiesKilledTotal = enemiesKilledTotal
+                enemiesKilledTotal = 0;
+            };
+             if (gameLevelStats[gameLevelCurrent].levelNumber > highScoreGameLevel){
+                 highScoreGameLevel = gameLevelStats[gameLevelCurrent].levelNumber;   
+             };
             
             // const youLose = new Image();
             // youLose.src = "img/Utility/youLose.png";
             //ctx.drawImage(youLose, 0, 100, canvas.width , 400)
+
+            //! Click to restart - issue with starts current level
+            //Mouse Click
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.keyCode === 13 && gameScreen === 3 && cityHealthNoReset <= 0 ){
+                    //Reset variables
+                    gameLevelStats.splice(0, gameLevelStats.length);
+                    generateLevels()    
+                    cityHealthNoReset = cityHealthSet;
+                    enemiesRemoved = 0;
+                    auLose.pause();
+                    auTheLastCity.play();
+                    gameLevelCurrent = 1
+
+                }
+                });
+
         }
         ctx.fillStyle = "rgb(0, 0, 0)";
         ctx.font = "35px Comic Sans MS strong";
-        ctx.textAlign = "center";
-        ctx.fillText("City Health: " + gameLevelStats[gameLevelCurrent].cityHealth, 100, 650);
+        ctx.textAlign = "left";
+        ctx.fillText("City Health: " + cityHealthNoReset, 15, 630);
 
+        ctx.fillStyle = "rgb(0, 0, 0)";
+        ctx.font = "20px Comic Sans MS strong";
+        ctx.textAlign = "left";
+
+        ctx.fillText("Level: " + gameLevelStats[gameLevelCurrent].levelNumber + " / " + gameLevelStats.length, 450, 620);
+       
+        ctx.fillText("Incoming: " + enemiesRemoved + " / " + gameLevelStats[gameLevelCurrent].levelEnemiesTotal, 450, 640);
+        ctx.fillText("Killed Total: " + enemiesKilledTotal, 450, 660);
+
+        ctx.fillStyle = "rgb(0, 0, 0)";
+        ctx.font = "14px Comic Sans MS strong";
+        ctx.textAlign = "left";
+        ctx.fillText("High Score:   " + "Max Killed: " + highScoreEnemiesKilledTotal + "   Max Level: " + highScoreGameLevel, 20, 690);
+ 
         if (gameLevelStats[gameLevelCurrent].levelCompleted === true){
             
             ctx.fillStyle = "rgb(255, 255, 255)";
@@ -582,6 +652,7 @@ function animate(timeStamp){
         if (e.keyCode === 13){
             if ( gameLevelStats[gameLevelCurrent].levelCompleted === true){
                         gameLevelCurrent++;
+                        enemiesRemoved = 0;
             }
         }
         });
