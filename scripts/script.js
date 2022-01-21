@@ -28,9 +28,8 @@ import Character from "./character.js"
         const cityHealthSet = 20;
         let cityHealthNoReset = cityHealthSet;
         let enemiesKilledTotal = 0;
-        
-        
-
+        let healthPackLikelihood = 0.03; //3%
+        let distanceHealthPack = 0;
         let lastTime = 1;
     
             //Functions
@@ -38,13 +37,33 @@ import Character from "./character.js"
             ctx.drawImage(img, sX, sY, sW, sH, dX, dY, dW, dH)
         }
 
+        
+        
         function enemyCreation(range){
             const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(range, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
             enemies.push(enemy);
+            //healthPack
+            if (Math.random() < healthPackLikelihood){
+               const healthPack = new HealthPack (Math.random() * (canvas.width - 64) + 32, 170 + Math.random() * 400);
+               healthPacks.push(healthPack);
+            }
         }
 
             //Classes
-        class Enemy {
+            class GameLevel {
+                constructor(_levelNumber, _cityHealth, _levelEnemiesTotal, _enemySpeed, _enemyHealth){
+                    this.levelNumber = _levelNumber;
+                    this.cityHealth = _cityHealth;
+                    this.allowedEnemiesOnScreen = 1000;
+                    this.enemyCount = 0;
+                    this.levelEnemiesTotal =_levelEnemiesTotal;
+                    this.enemySpeed = _enemySpeed;
+                    this.enemyHealth = _enemyHealth;
+                    this.levelCompleted = false;
+                }
+            }
+
+            class Enemy {
             constructor(_x, _y, _speed, _health, _enemyInterval, _enemySelect){
             this.width = 64; //  832 / 13 = 
             this.height = 64; //  1344 /21
@@ -100,23 +119,20 @@ import Character from "./character.js"
             }
         }
 
-        class GameLevel {
-            constructor(_levelNumber, _cityHealth, _levelEnemiesTotal, _enemySpeed, _enemyHealth){
-                this.levelNumber = _levelNumber;
-                this.cityHealth = _cityHealth;
-                this.allowedEnemiesOnScreen = 1000;
-                this.enemyCount = 0;
-                this.levelEnemiesTotal =_levelEnemiesTotal;
-                this.enemySpeed = _enemySpeed;
-                this.enemyHealth = _enemyHealth;
-                this.levelCompleted = false;
+        
+
+        class HealthPack {
+            constructor(_x, _y){
+                this.x = _x; //canvas.width * Math.random()
+                this.y = _y; //600 * Math.random()
             }
-        }
+            show(){
+                ctx.drawImage(imgHealthPack, this.x, this.y, 30, 30)
+        }};
             //KeyCode
             window.addEventListener("keydown", function(e){
                 keys[e.keyCode] = true;
                 hero.moving = true;
-                //console.log(keys) //Find keyCode in console.log
             });
             window.addEventListener("keyup", function(e){
                 delete keys [e.keyCode];
@@ -153,7 +169,9 @@ import Character from "./character.js"
     const auAargh6 = new Audio("./audio/effects/aargh6.ogg");
     const auAargh7 = new Audio("./audio/effects/aargh7.ogg");
     auAarghs.push(auAargh1, auAargh2, auAargh3, auAargh4, auAargh5, auAargh6, auAargh7);
+    const auHeal = new Audio("./audio/effects/heal.mp3");
 
+    const healthPacks = [];
 
 
     //Images
@@ -230,6 +248,9 @@ import Character from "./character.js"
     Sprite18.src = "img/characters/18.png"
     characterSprites.push(Sprite1, Sprite2, Sprite3, Sprite4, Sprite5, Sprite6, Sprite7, Sprite8, Sprite9, Sprite10, Sprite11, Sprite12, Sprite12, Sprite13, Sprite14, Sprite15, Sprite16, Sprite17, Sprite18)
     
+    const imgHealthPack = new Image();
+    imgHealthPack.src = "img/Utility/healthPack.png";
+
     const scoreBoard = {
         width: canvas.width,
         height: 100
@@ -441,7 +462,7 @@ function animate(timeStamp){
             ctx.fillStyle = "white";
 
             ctx.fillText("Use ", 70, 150)
-            ctx.drawImage(imgArrowKeys, 130, 110, 100,60)
+            ctx.drawImage(imgArrowKeys, 130, 110, 100, 60)
             ctx.fillText("to navigate your hero", 250, 150)
             
             // to navigate", 15, 220);
@@ -451,9 +472,10 @@ function animate(timeStamp){
             
             ctx.textAlign = "center";
             ctx.font = "20px Comic Sans MS strong";
-            ctx.fillText("Infected earthlings spawns from top of the screen", 300, 350);
-            ctx.fillText("If they reach the bottom of the screen your city loses health", 300, 380);
-            ctx.fillText("If your citys health reaches 0 the game is lost", 300, 410);
+            ctx.fillText("Infected earthlings spawns from top of the screen", 300, 320);
+            ctx.fillText("If they reach the bottom of the screen your city needs", 300, 350);
+            ctx.fillText("to vaccinate them to prevent the virus spreading", 300, 380);
+            ctx.fillText("If your city's number of vaccines reaches 0 the game is lost", 300, 410);
 
             ctx.textAlign = "left";
             ctx.fillText("Get the highest score in: ", 170, 460);
@@ -473,9 +495,28 @@ function animate(timeStamp){
                     }
 
         //Hero
-            drawSprite(playerSprite, hero.width * hero.frameX, hero.height * hero.frameY, hero.width, hero.height, hero.x, hero.y, hero.width, hero.height)
-            actionHero();
- 
+        drawSprite(playerSprite, hero.width * hero.frameX, hero.height * hero.frameY, hero.width, hero.height, hero.x, hero.y, hero.width, hero.height)
+        actionHero();
+        
+        //HealthPack Collision
+        if (healthPacks.length !== 0){
+            for (let k = 0; k < healthPacks.length; k++){
+                distanceHealthPack = Math.sqrt(Math.pow((healthPacks[k].x - hero.x),2) + Math.pow((healthPacks[k].y - hero.y),2));
+                if (distanceHealthPack <= 35){
+                   healthPacks.splice(k, 1);
+                   cityHealthNoReset += randomNumber(5,2);
+                   auHeal.play();
+                //             if(enemies[j].health <= 0){
+                //                 enemies.splice(j, 1);
+                //                 auAarghs[randomNumber(auAarghs.length,0)].play();
+                //                 enemiesKilledTotal++;
+                //                 enemiesRemoved++;
+                //             }
+                //         break;
+                     }
+                 }
+                };
+
         //Shots
         for (let i = 0; i < shots.length; i++){
             shots[i].show();
@@ -510,13 +551,13 @@ function animate(timeStamp){
             gameLevelStats[gameLevelCurrent].enemyCount < gameLevelStats[gameLevelCurrent].levelEnemiesTotal && 
             gameLevelStats[gameLevelCurrent].levelCompleted === false){
             //Enemy Creation
-            console.log("(gameLevelCurrent) % 5 " + (gameLevelCurrent) % 5) 
+            //console.log("(gameLevelCurrent) % 5 " + (gameLevelCurrent) % 5) 
             // if (gameLevelCurrent !== 0 && (gameLevelCurrent) % 5 === 0){ //BOSS Level
 
                 // const enemy = enemyCreation(100)
             // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
             // } else {
-                const enemy = enemyCreation(7)
+                const enemy = enemyCreation(5)
             // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
             // }
             // enemies.push(enemy);
@@ -538,7 +579,7 @@ function animate(timeStamp){
                 //   const enemy = new Enemy(Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
                 // console.log(gameLevelCurrent)
                 // if (gameLevelCurrent !== 0 && (gameLevelCurrent) % 5 === 0){ //BOSS Level 
-                    const enemy = enemyCreation(7)
+                    const enemy = enemyCreation(5)
                 // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
                 // } else {
                     // const enemy = enemyCreation(7)
@@ -557,7 +598,10 @@ function animate(timeStamp){
                 auScreams[Math.floor(Math.random() * 4)].play();
             }
         }
+        for (let i = 0; i < healthPacks.length; i++){
 
+            healthPacks[i].show();
+        }
         //Check Win
         if (gameLevelStats[gameLevelCurrent].enemyCount >= gameLevelStats[gameLevelCurrent].levelEnemiesTotal && //Number of enemies been present
             enemies.length === 0 && //enemies array is empty
@@ -599,11 +643,6 @@ function animate(timeStamp){
                 highScoreShotsFiredTotal = shotsFiredTotal;
             };
             
-            // const youLose = new Image();
-            // youLose.src = "img/Utility/youLose.png";
-            //ctx.drawImage(youLose, 0, 100, canvas.width , 400)
-
-            //! Click to restart - issue with starts current level
             //Mouse Click
             
             document.addEventListener('keydown', (e) => {
@@ -624,14 +663,14 @@ function animate(timeStamp){
         ctx.fillStyle = "rgb(0, 0, 0)";
         ctx.font = "35px Comic Sans MS strong";
         ctx.textAlign = "left";
-        ctx.fillText("City Health: " + cityHealthNoReset, 15, 630);
+        ctx.fillText("Vaccines left: " + cityHealthNoReset, 35, 655);
 
         ctx.fillStyle = "rgb(0, 0, 0)";
         ctx.font = "20px Comic Sans MS strong";
         ctx.textAlign = "left";
 
         ctx.fillText("Level: " + gameLevelStats[gameLevelCurrent].levelNumber + " / " + gameLevelStats.length, 450, 620);
-        ctx.fillText("Wave: " + enemiesRemoved + " / " + gameLevelStats[gameLevelCurrent].levelEnemiesTotal, 450, 640);
+        ctx.fillText("Saved: " + enemiesRemoved + " / " + gameLevelStats[gameLevelCurrent].levelEnemiesTotal, 450, 640);
         ctx.fillText("Killed: " + enemiesKilledTotal, 450, 660);
         ctx.fillText("Shots: " + shotsFiredTotal, 450, 680);
 
