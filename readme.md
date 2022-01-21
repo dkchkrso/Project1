@@ -6,7 +6,7 @@ This game is the first project in the first module of Ironhacks Full Stack Devel
 The goal was to create a simple shooting game with a clear winning and losing setup.
 An additional challenge was to animate the characters using sprite sheets
 
-### Game Story
+### Game Story Line
 
 #### The Last Hope
 The year is 2072 and the covid19 virus has been causing havac on the Earth for more than 5 decades.
@@ -16,6 +16,8 @@ You are one of the citizens in The Last Hope and you have been tasked to guard t
 Be prepared for the longest day of your life
 
 ## Setup
+No setup is required. The game runs without any issues in the must common browsers (Chrome, Edge etc.)
+
 If you’d like to view my project in your browser:
 
 - `git clone https://github.com/dkchkrso/Project1.git` in your terminal
@@ -23,18 +25,18 @@ If you’d like to view my project in your browser:
 - `open index.html`
 
 ## Team Members
-Christian Kroer Sørensen :+1:
+The army of one - Christian Kroer Sørensen :+1:
 
 ## Future work
 - Improve design
   - Death animation
   - Board, city and scoring board
 - Improve features
-  - Make enemies status unique
+  - Make earthlings stats more unique
   - Adding weapon upgrades (fire rates, power, multiplication, angle/direction)
   - Adding capability to cure and rescue people
-  - Adding vaccination packs
+  - Adding vaccination packs [done]
   - Adding bombs
   - Adding bosses
 - Level adjustments
-- Adding storage capabilities (save, high score) 
+- Adding storage capabilities (e.g. save game and store high scores)
