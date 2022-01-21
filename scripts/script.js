@@ -31,6 +31,7 @@ import Character from "./character.js"
         let healthPackLikelihood = 0.03; //3%
         let distanceHealthPack = 0;
         let lastTime = 1;
+        let audioOn = true;
     
             //Functions
         function drawSprite(img, sX, sY, sW, sH, dX, dY, dW, dH){
@@ -181,10 +182,10 @@ import Character from "./character.js"
     bgCityStreet.src = "img/Utility/cityStreet.jpg";
     const bgMetalPlate = new Image();
     bgMetalPlate.src = "img/Utility/metalPlate.png";
-    // const bgAudio = new Image();
-    // bgAudio.src = "img/Utility/audioOn.png";´
-    // const imgHealthPack = new Image();
-    // imgHealthPack.src = "img/Utility/healthPack.png"
+    const bgAudioOn = new Image();
+    bgAudioOn.src = "img/Utility/audioOn.png";
+    const bgAudioOff = new Image();
+    bgAudioOff.src = "img/Utility/audioOff.png";
     const imgArrowKeys = new Image();
     imgArrowKeys.src = "img/Utility/arrowKeys.png"
     const imgSpaceBar = new Image();
@@ -442,18 +443,32 @@ function animate(timeStamp){
             });
         break;
     case 3:    
-        
-            
-    
         //Background and Scoreboard
-        //context.drawImage(img,x,y,width,height);
         ctx.fillStyle = 'black';
-        //ctx.fillRect(0, canvas.height - 100, scoreBoard.width, scoreBoard.height)
         ctx.drawImage(bgMetalPlate, 0, canvas.height - 102, scoreBoard.width, scoreBoard.height)
         ctx.drawImage(bgCityStreet, 0, 0, canvas.width , 600)
-        //ctx.drawImage(bgCity, 0, 400, canvas.width , 200)
-        //ctx.drawImage(bgAudio, 550, 10, 40 , 40)
         
+        // function getMousePosition(canvas, event) {
+        //     let rect = canvas.getBoundingClientRect();
+        //     let x = event.clientX - rect.left;
+        //     let y = event.clientY - rect.top;
+        //     // console.log("Coordinate x: " + x, 
+        //     //             "Coordinate y: " + y);
+        //     return { x: x, y: y };
+        // }
+      
+        // canvas.addEventListener("mousedown", function(e)
+        // {
+        //     console.log(getMousePosition(canvas, e));
+        //     if (
+        //         getMousePosition(canvas, e).x >= 560 &&
+        //         getMousePosition(canvas, e).x <= 590 &&
+        //         getMousePosition(canvas, e).y >= 10 &&
+        //         getMousePosition(canvas, e).y <= 40){
+        //             //AUDIO AREA CLICKED
+        //         }
+        // });
+       
         if (gameLevelCurrent === 0){
             ctx.lineWidth = 4;
             ctx.font = "26px Comic Sans MS strong";
@@ -470,7 +485,7 @@ function animate(timeStamp){
             
             ctx.fillText("Take ", 70, 260);
             ctx.drawImage(imgHealthPack, 130, 230, 40, 40)
-            ctx.fillText("regain vaccines", 180, 260)
+            ctx.fillText("to regain vaccines", 180, 260)
             
             ctx.textAlign = "center";
             ctx.font = "20px Comic Sans MS strong";
