@@ -28,7 +28,7 @@ import Character from "./character.js"
         const cityHealthSet = 20;
         let cityHealthNoReset = cityHealthSet;
         let enemiesKilledTotal = 0;
-        let healthPackLikelihood = 0.03; //3%
+        let healthPackLikelihood = 0.05; //5%
         let distanceHealthPack = 0;
         let lastTime = 1;
         let audioOn = true;
@@ -447,27 +447,33 @@ function animate(timeStamp){
         ctx.fillStyle = 'black';
         ctx.drawImage(bgMetalPlate, 0, canvas.height - 102, scoreBoard.width, scoreBoard.height)
         ctx.drawImage(bgCityStreet, 0, 0, canvas.width , 600)
-        
-        // function getMousePosition(canvas, event) {
-        //     let rect = canvas.getBoundingClientRect();
-        //     let x = event.clientX - rect.left;
-        //     let y = event.clientY - rect.top;
-        //     // console.log("Coordinate x: " + x, 
-        //     //             "Coordinate y: " + y);
-        //     return { x: x, y: y };
-        // }
+        //Audio On/Off
+        if (audioOn === true){
+            ctx.drawImage(bgAudioOn, 560, 10, 30 , 30)
+            auTheLastCity.play();
+        } else {
+            ctx.drawImage(bgAudioOff, 560, 10, 30 , 30)
+            auTheLastCity.pause();
+        }
+
+        function getMousePosition(canvas, event) {
+            let rect = canvas.getBoundingClientRect();
+            let x = event.clientX - rect.left;
+            let y = event.clientY - rect.top;
+            return { x: x, y: y };
+        }
       
-        // canvas.addEventListener("mousedown", function(e)
-        // {
-        //     console.log(getMousePosition(canvas, e));
-        //     if (
-        //         getMousePosition(canvas, e).x >= 560 &&
-        //         getMousePosition(canvas, e).x <= 590 &&
-        //         getMousePosition(canvas, e).y >= 10 &&
-        //         getMousePosition(canvas, e).y <= 40){
-        //             //AUDIO AREA CLICKED
-        //         }
-        // });
+        canvas.addEventListener("mousedown", function(e)
+        {
+            if (
+                getMousePosition(canvas, e).x >= 560 &&
+                getMousePosition(canvas, e).x <= 590 &&
+                getMousePosition(canvas, e).y >= 10 &&
+                getMousePosition(canvas, e).y <= 40){
+                    if (audioOn === true){audioOn = false}
+                    else {audioOn = true}
+            }
+        });
        
         if (gameLevelCurrent === 0){
             ctx.lineWidth = 4;
@@ -523,13 +529,7 @@ function animate(timeStamp){
                    healthPacks.splice(k, 1);
                    cityHealthNoReset += randomNumber(5,2);
                    auHeal.play();
-                //             if(enemies[j].health <= 0){
-                //                 enemies.splice(j, 1);
-                //                 auAarghs[randomNumber(auAarghs.length,0)].play();
-                //                 enemiesKilledTotal++;
-                //                 enemiesRemoved++;
-                //             }
-                //         break;
+                   break;
                      }
                  }
                 };
@@ -567,18 +567,9 @@ function animate(timeStamp){
         if (!enemies.length && 
             gameLevelStats[gameLevelCurrent].enemyCount < gameLevelStats[gameLevelCurrent].levelEnemiesTotal && 
             gameLevelStats[gameLevelCurrent].levelCompleted === false){
-            //Enemy Creation
-            //console.log("(gameLevelCurrent) % 5 " + (gameLevelCurrent) % 5) 
-            // if (gameLevelCurrent !== 0 && (gameLevelCurrent) % 5 === 0){ //BOSS Level
-
-                // const enemy = enemyCreation(100)
-            // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
-            // } else {
-                const enemy = enemyCreation(5)
-            // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
-            // }
-            // enemies.push(enemy);
-
+            
+                //Enemy Creation
+            const enemy = enemyCreation(5)
             gameLevelStats[gameLevelCurrent].enemyCount++  
         }
         for (let i = 0; i < enemies.length; i++){
@@ -591,18 +582,7 @@ function animate(timeStamp){
                     enemies.length < gameLevelStats[gameLevelCurrent].allowedEnemiesOnScreen && 
                     enemies[i].enemyInterval < enemies[i].enemyTimer &&
                     gameLevelStats[gameLevelCurrent].enemyCount < gameLevelStats[gameLevelCurrent].levelEnemiesTotal){
-                    //Enemy Creation
-                        // const enemy = new Enemy(Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), gameLevelStats[gameLevelCurrent].enemyHealth, 50, Math.floor((Math.random() * (characterSprites.length))))
-                //   const enemy = new Enemy(Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
-                // console.log(gameLevelCurrent)
-                // if (gameLevelCurrent !== 0 && (gameLevelCurrent) % 5 === 0){ //BOSS Level 
                     const enemy = enemyCreation(5)
-                // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
-                // } else {
-                    // const enemy = enemyCreation(7)
-                // const enemy = new Enemy (Math.random() * (canvas.width - 64) + 32, 0, gameLevelStats[gameLevelCurrent].enemySpeed * (Math.random() * 2 + 0.5), randomNumber(7, 1) + gameLevelCurrent % 5, 50, Math.floor((Math.random() * (characterSprites.length))))
-                // }
-                // enemies.push(enemy);
                 gameLevelStats[gameLevelCurrent].enemyCount++
             } else {
                 enemies[i].enemyTimer++
