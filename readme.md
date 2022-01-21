@@ -1,4 +1,4 @@
-# The Last City
+# The Last Hope
 
 ## Introduction
 This game is the first project in the first module of Ironhacks Full Stack Developer Program.
