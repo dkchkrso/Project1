@@ -455,20 +455,22 @@ function animate(timeStamp){
         //ctx.drawImage(bgAudio, 550, 10, 40 , 40)
         
         if (gameLevelCurrent === 0){
-            //enemies spawn area
             ctx.lineWidth = 4;
             ctx.font = "26px Comic Sans MS strong";
             ctx.textAlign = "left";
             ctx.fillStyle = "white";
 
-            ctx.fillText("Use ", 70, 150)
-            ctx.drawImage(imgArrowKeys, 130, 110, 100, 60)
-            ctx.fillText("to navigate your hero", 250, 150)
+            ctx.fillText("Use ", 70, 120)
+            ctx.drawImage(imgArrowKeys, 120, 70, 120, 60)
+            ctx.fillText("to navigate your hero", 250, 120)
             
-            // to navigate", 15, 220);
-            ctx.fillText("Use ", 70, 230);
-            ctx.drawImage(imgSpaceBar, 130, 205, 100, 30)
-            ctx.fillText("to shoot", 250, 230)
+            ctx.fillText("Use ", 70, 190);
+            ctx.drawImage(imgSpaceBar, 130, 165, 100, 30)
+            ctx.fillText("to shoot", 250, 190)
+            
+            ctx.fillText("Take ", 70, 260);
+            ctx.drawImage(imgHealthPack, 130, 230, 40, 40)
+            ctx.fillText("regain vaccines", 180, 260)
             
             ctx.textAlign = "center";
             ctx.font = "20px Comic Sans MS strong";
